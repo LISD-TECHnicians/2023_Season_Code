@@ -518,14 +518,13 @@ public class Robot extends TimedRobot {
       }  
     }
     
-    public void stopMotor(){
-      // frontRightMotor.stopMotor();
+    public void stopMotor(){ // Stops motors when called
       frontRightMotor.set(0);
       rearRightMotor.set(0);
       frontLeftMotor.set(0);
       rearLeftMotor.set(0);
     }
-    public double inchesToEncoder(double inches) {
+    public double inchesToEncoder(double inches) { // Takes in inches, reutrns encoder ticks
       double encoderUnits = encoderUnitsPerInch * inches;
       return encoderUnits;
     }
@@ -545,31 +544,27 @@ public class Robot extends TimedRobot {
  }
 
     @Override 
-    public void autonomousInit() //Initialization of autonomous mode 
-    {
-    
-      
-    rearRightMotor.follow(frontRightMotor); //rear wheels will follow the front leading wheels
-    rearLeftMotor.follow(frontLeftMotor);
+    public void autonomousInit() { //Initialization of autonomous mode 
+      rearRightMotor.follow(frontRightMotor); //rear wheels will follow the front leading wheels
+      rearLeftMotor.follow(frontLeftMotor);
 
-    frontRightMotor.setInverted(TalonFXInvertType.CounterClockwise); //May need to run opposite direction
-    rearRightMotor.setInverted(InvertType.FollowMaster); //Inversion will match master
-    frontLeftMotor.setInverted(TalonFXInvertType.CounterClockwise);
-    rearLeftMotor.setInverted(InvertType.FollowMaster);
+      frontRightMotor.setInverted(TalonFXInvertType.CounterClockwise); //May need to run opposite direction
+      rearRightMotor.setInverted(InvertType.FollowMaster); //Inversion will match master
+      frontLeftMotor.setInverted(TalonFXInvertType.CounterClockwise);
+      rearLeftMotor.setInverted(InvertType.FollowMaster);
 
-    brushlessNeo_A.setInverted(false);
-    brushlessNeo_B.setInverted(true);
-    brushlessNeo_C.setInverted(false);
-    runOneBal = 0;
-    autoTimer.reset();
-    autoTimer.start();
+      brushlessNeo_A.setInverted(false);
+      brushlessNeo_B.setInverted(true);
+      brushlessNeo_C.setInverted(false);
+      runOneBal = 0;
+      autoTimer.reset();
+      autoTimer.start();
     
     
     }
     
     @Override 
-    public void autonomousPeriodic() 
-    {
+    public void autonomousPeriodic() {
       // norm 1, comp bal 2, bal 3
       double autoSelect = 3;
       double curTime = autoTimer.get();

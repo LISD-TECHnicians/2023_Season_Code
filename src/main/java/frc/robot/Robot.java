@@ -58,8 +58,10 @@ public class Robot extends TimedRobot {
   private final DigitalInput lowerHoistLimitSwitch = new DigitalInput(0);
 
   private final Solenoid gripperSolenoidPCM = new Solenoid(PneumaticsModuleType.CTREPCM, 0);
-  private final AHRS gyro = new AHRS(SPI.Port.kMXP);
-  final NeutralMode brakeNeutral = NeutralMode.Brake; // Brake value for balance beam lock
+  
+  private final AHRS gyro = new AHRS(SPI.Port.kMXP); // Gyro used for balancing
+
+  final NeutralMode brakeNeutral = NeutralMode.Brake; // Neutral modes for drive system
   final NeutralMode coastNeutral = NeutralMode.Coast;
   
   final float defaultCarriageSpeed = .80f;
@@ -111,11 +113,9 @@ public class Robot extends TimedRobot {
  
   @Override
   public void robotInit() {
-   
-
     CameraServer.startAutomaticCapture();
     
-    frontRightMotor.configFactoryDefault(); // Run once at init
+    frontRightMotor.configFactoryDefault(); 
     rearRightMotor.configFactoryDefault();
     frontLeftMotor.configFactoryDefault();
     rearLeftMotor.configFactoryDefault();
@@ -128,6 +128,7 @@ public class Robot extends TimedRobot {
     brushlessNeo_A.enableSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, true);
     brushlessNeo_B.enableSoftLimit(CANSparkMax.SoftLimitDirection.kForward, true); //Enables a motor limitation for forward 
     brushlessNeo_B.enableSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, true);
+
     brushlessNeo_C.enableSoftLimit(CANSparkMax.SoftLimitDirection.kForward, true); //Enables a motor limitation for forward 
     brushlessNeo_C.enableSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, true); //Enables a motor limitation for reverse
 
@@ -175,7 +176,8 @@ public class Robot extends TimedRobot {
     autoBalanceButton = rightStick.getRawButton(12);
     limeLightTarget = leftStick.getRawButton(11);
     LLApril = leftStick.getRawButtonPressed(12);
-    frontRightMotor.setNeutralMode(coastNeutral);
+
+    frontRightMotor.setNeutralMode(coastNeutral); // Constantly sets neutral mode to coast in teleop
     frontLeftMotor.setNeutralMode(coastNeutral);
     rearRightMotor.setNeutralMode(coastNeutral);
     rearLeftMotor.setNeutralMode(coastNeutral);
@@ -187,14 +189,15 @@ public class Robot extends TimedRobot {
     // keeps drive code from fighting for motor cmd 
     if (autoBalanceButton){
       autoBalance(0.008);
-    }else if(limeLightTarget){
+    }
+    else if(limeLightTarget){
       LimeLight();
-    } else {
+    } 
+    else {
     m_robotDrive.arcadeDrive( rotation, forwardMovement);  
     }
 
-    if (Math.abs(forwardMovement) < 0.08) {forwardMovement = 0;}
-
+    if (Math.abs(forwardMovement) < 0.08) {forwardMovement = 0;} // deadbands for drive system movememnt
     if (Math.abs(rotation) < 0.08) {rotation = 0;}
 
     if (reduceRotation) 
